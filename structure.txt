@@ -1,0 +1,31 @@
+kids-picture-matching-game/
+├── public/
+│   ├── index.html                   # Main HTML file
+│   ├── images/                      # Folder for image assets (e.g., fruits, animals)
+│   ├── sounds/                      # Folder for sound files
+│   └── favicon.ico                  # App icon
+├── src/
+│   ├── assets/                      # Asset management folder
+│   │   ├── images/                  # Folder for image assets used in the game
+│   │   └── sounds/                  # Folder for audio assets
+│   ├── components/                  # Reusable component files
+│   │   ├── Card.js                  # Component representing a single card
+│   │   ├── GameBoard.js             # Component for the game board grid
+│   │   └── ScoreBoard.js            # Component for displaying score and timer
+│   ├── context/                     # Context API for global state management
+│   │   └── GameContext.js           # Context for game state and logic
+│   ├── hooks/                       # Custom hooks for game-related logic
+│   │   └── useGameLogic.js          # Hook for game logic (matching, scoring)
+│   ├── pages/                       # Page-level components
+│   │   ├── HomePage.js              # Main landing page of the game
+│   │   └── GamePage.js              # Game play page
+│   ├── styles/                      # Styling folder
+│   │   └── global.css               # Global styles for the app
+│   ├── App.js                       # Root application component
+│   ├── index.js                     # Main entry file for React rendering
+│   └── utils/                       # Utility functions and helpers
+│       ├── soundManager.js          # Sound management with Howler.js
+│       └── animationConfig.js       # Configuration for animations (Framer Motion)
+├── tailwind.config.js               # Tailwind CSS configuration file
+├── package.json                     # Project dependencies and scripts
+└── README.md                        # Project documentation
