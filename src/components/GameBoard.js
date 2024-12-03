@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import Card from './Card';
 import ScoreBoard from './ScoreBoard';
+import confetti from 'canvas-confetti'; // Import canvas-confetti
 
 function GameBoard() {
   const [cards, setCards] = useState([]);
@@ -13,7 +14,10 @@ function GameBoard() {
 
   const shuffleCards = useCallback(() => {
     const initialCards = [];
-    const images = ["apple.jpg", "banana.jpg", "orange.jpg", "grape.jpg", "cherry.jpg", "pear.jpg", "melon.jpg", "peach.jpg", "bird.jpg"];
+    const images = [
+      'apple.jpg', 'banana.jpg', 'orange.jpg', 'grape.jpg',
+      'cherry.jpg', 'pear.jpg', 'melon.jpg', 'peach.jpg', 'bird.jpg',
+    ];
     const levelCards = images.slice(0, level + 2);
     initialCards.push(...levelCards, ...levelCards);
 
@@ -41,7 +45,7 @@ function GameBoard() {
         setFlippedIndices([]);
 
         // Play success sound and lower background music
-        const successSound = new Audio('/sounds/Successsoundeffect.mp3'); // Path to your success sound
+        const successSound = new Audio('/sounds/Successsoundeffect.mp3');
         successSound.volume = 1.0; // Full volume for success sound
         successSound.play();
 
@@ -67,14 +71,35 @@ function GameBoard() {
   useEffect(() => {
     if (matchedCards.length === cards.length && cards.length > 0) {
       setGameOver(true);
+
+      // Trigger big and impressive fireworks
+      const launchFireworks = () => {
+        for (let i = 0; i < 15; i++) { // Increased number of bursts
+          setTimeout(() => {
+            confetti({
+              particleCount: 400, // High particle count
+              spread: 160, // Wide dispersion
+              startVelocity: 80, // Fast confetti
+              angle: Math.random() * 360, // Random directions
+              origin: {
+                x: Math.random(), // Random X positions
+                y: Math.random() * 0.6, // Random Y positions (top 60% of the screen)
+              },
+              zIndex: 1000, // Above other elements
+            });
+          }, i * 300); // Stagger each burst by 300ms
+        }
+      };
+
+      launchFireworks();
     }
   }, [matchedCards, cards]);
 
   // Play intro music when the game starts
   useEffect(() => {
-    const bgMusic = new Audio('/sounds/bensoundukulelehappyroyalty.mp3'); // Path to your intro music
-    bgMusic.loop = true; // Loop the music
-    bgMusic.volume = 0.5; // Set initial volume
+    const bgMusic = new Audio('/sounds/bensoundukulelehappyroyalty.mp3');
+    bgMusic.loop = true;
+    bgMusic.volume = 0.5;
     bgMusic.play().catch((error) => {
       console.error('Failed to play intro music:', error);
     });
