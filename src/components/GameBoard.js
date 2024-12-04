@@ -43,33 +43,32 @@ function GameBoard() {
 
   useEffect(() => {
     if (flippedIndices.length === 2) {
-        const [firstIndex, secondIndex] = flippedIndices;
-        if (cards[firstIndex] === cards[secondIndex]) {
-            setMatchedCards((prev) => [...prev, firstIndex, secondIndex]);
-            setScore((prev) => prev + 10); // Increase score by 10 for a correct match
-            setFlippedIndices([]);
+      const [firstIndex, secondIndex] = flippedIndices;
+      if (cards[firstIndex] === cards[secondIndex]) {
+        setMatchedCards((prev) => [...prev, firstIndex, secondIndex]);
+        setScore((prev) => prev + 10); // Increase score by 10 for a correct match
+        setFlippedIndices([]);
 
-            // Play success sound and lower background music
-            const successSound = new Audio('/sounds/Successsoundeffect.mp3');
-            successSound.volume = 1.0; // Full volume for success sound
-            successSound.play();
+        // Play success sound and lower background music
+        const successSound = new Audio('/sounds/Successsoundeffect.mp3');
+        successSound.volume = 1.0; // Full volume for success sound
+        successSound.play();
 
-            if (audio) {
-                audio.volume = 0.1; // Reduce background music volume
-                setTimeout(() => {
-                    audio.volume = 0.5; // Restore background music volume after 1.5 seconds
-                }, 1500);
-            }
-        } else {
-            setScore((prev) => Math.max(0, prev - 1)); // Decrease score by 1 for an incorrect match, ensuring it doesn't go below 0
-            const timeoutId = setTimeout(() => {
-                setFlippedIndices([]);
-            }, 1000);
-            return () => clearTimeout(timeoutId);
+        if (audio) {
+          audio.volume = 0.1; // Reduce background music volume
+          setTimeout(() => {
+            audio.volume = 0.5; // Restore background music volume after 1.5 seconds
+          }, 1500);
         }
+      } else {
+        setScore((prev) => Math.max(0, prev - 1)); // Decrease score by 1 for an incorrect match, ensuring it doesn't go below 0
+        const timeoutId = setTimeout(() => {
+          setFlippedIndices([]);
+        }, 1000);
+        return () => clearTimeout(timeoutId);
+      }
     }
-}, [flippedIndices, cards, audio]);
-
+  }, [flippedIndices, cards, audio]);
 
   useEffect(() => {
     shuffleCards();
@@ -94,11 +93,16 @@ function GameBoard() {
     }
   };
 
-  // Trigger fireworks when the game is over (all cards matched)
+  // Trigger fireworks and play celebration sound when the game is over (all cards matched)
   useEffect(() => {
     if (matchedCards.length === cards.length && cards.length > 0) {
       setGameOver(true);
       launchFireworks();
+
+      // Play celebration sound
+      const celebrationSound = new Audio('/sounds/crowdcheersound.mp3');
+      celebrationSound.volume = 1.0; // Full volume
+      celebrationSound.play();
     }
   }, [matchedCards, cards]);
 
@@ -135,7 +139,6 @@ function GameBoard() {
     setScore(0);
     setGameOver(false);
     shuffleCards();
-    // Optionally, trigger fireworks for the next level or on other specific conditions.
   };
 
   return (
@@ -148,7 +151,6 @@ function GameBoard() {
         <strong>Level:</strong> <span>{level}</span>
       </p>
       
-      {/* Music selection dropdown */}
       <label htmlFor="music-select">Choose your intro music:</label>
       <select 
         id="music-select" 
