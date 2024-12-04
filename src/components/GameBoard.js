@@ -21,9 +21,9 @@ function GameBoard() {
     const initialCards = [];
     const images = [
       'apple.jpg', 'banana.jpg', 'orange.jpg', 'grape.jpg',
-      'cherry.jpg', 'pear.jpg', 'melon.jpg', 'peach.jpg', 'bird.jpg',
+      'cherry.jpg', 'pear.jpg', 'melon.jpg', 'peach.jpg', 'bird.jpg', 'dog.jpg','dog_1.jpg'
     ];
-    const levelCards = images.slice(0, level + 2);
+    const levelCards = images.slice(0, level + 4);
     initialCards.push(...levelCards, ...levelCards);
 
     const shuffledCards = [...initialCards];
@@ -43,31 +43,33 @@ function GameBoard() {
 
   useEffect(() => {
     if (flippedIndices.length === 2) {
-      const [firstIndex, secondIndex] = flippedIndices;
-      if (cards[firstIndex] === cards[secondIndex]) {
-        setMatchedCards((prev) => [...prev, firstIndex, secondIndex]);
-        setScore((prev) => prev + 1);
-        setFlippedIndices([]);
+        const [firstIndex, secondIndex] = flippedIndices;
+        if (cards[firstIndex] === cards[secondIndex]) {
+            setMatchedCards((prev) => [...prev, firstIndex, secondIndex]);
+            setScore((prev) => prev + 10); // Increase score by 10 for a correct match
+            setFlippedIndices([]);
 
-        // Play success sound and lower background music
-        const successSound = new Audio('/sounds/Successsoundeffect.mp3');
-        successSound.volume = 1.0; // Full volume for success sound
-        successSound.play();
+            // Play success sound and lower background music
+            const successSound = new Audio('/sounds/Successsoundeffect.mp3');
+            successSound.volume = 1.0; // Full volume for success sound
+            successSound.play();
 
-        if (audio) {
-          audio.volume = 0.1; // Reduce background music volume
-          setTimeout(() => {
-            audio.volume = 0.5; // Restore background music volume after 1.5 seconds
-          }, 1500);
+            if (audio) {
+                audio.volume = 0.1; // Reduce background music volume
+                setTimeout(() => {
+                    audio.volume = 0.5; // Restore background music volume after 1.5 seconds
+                }, 1500);
+            }
+        } else {
+            setScore((prev) => Math.max(0, prev - 1)); // Decrease score by 1 for an incorrect match, ensuring it doesn't go below 0
+            const timeoutId = setTimeout(() => {
+                setFlippedIndices([]);
+            }, 1000);
+            return () => clearTimeout(timeoutId);
         }
-      } else {
-        const timeoutId = setTimeout(() => {
-          setFlippedIndices([]);
-        }, 1000);
-        return () => clearTimeout(timeoutId);
-      }
     }
-  }, [flippedIndices, cards, audio]);
+}, [flippedIndices, cards, audio]);
+
 
   useEffect(() => {
     shuffleCards();
@@ -75,7 +77,7 @@ function GameBoard() {
 
   // Function to launch fireworks
   const launchFireworks = () => {
-    for (let i = 0; i < 15; i++) { // Increased number of bursts
+    for (let i = 0; i < 10; i++) { // Increased number of bursts
       setTimeout(() => {
         confetti({
           particleCount: 400, // High particle count
