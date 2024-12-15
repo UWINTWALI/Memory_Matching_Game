@@ -4,7 +4,6 @@ import { useLocation } from 'react-router-dom';
 import Card from './Card';
 import ScoreBoard from './ScoreBoard';
 import confetti from 'canvas-confetti';
-import Cookies from 'js-cookie'; // Import js-cookie
 
 function GameBoard() {
   const location = useLocation();
@@ -17,24 +16,10 @@ function GameBoard() {
   const [level, setLevel] = useState(1);
   const [audio, setAudio] = useState(null);
   const [selectedMusic, setSelectedMusic] = useState('/sounds/PraiseInstrumental.mp3');
-  
+
   // New state variables for accuracy tracking
   const [totalAttempts, setTotalAttempts] = useState(0);
   const [correctMatches, setCorrectMatches] = useState(0);
-  
-  // Load saved score and level from cookies
-  useEffect(() => {
-    const savedScore = Cookies.get(`score_${username}`) || 0;
-    const savedLevel = Cookies.get(`level_${username}`) || 1;
-    setScore(parseInt(savedScore));
-    setLevel(parseInt(savedLevel));
-  }, [username]);
-
-  // Save score and level to cookies
-  const saveProgressToCookies = useCallback(() => {
-    Cookies.set(`score_${username}`, score);
-    Cookies.set(`level_${username}`, level);
-  }, [username, score, level]);
 
   // Shuffle cards based on current level
   const shuffleCards = useCallback(() => {
@@ -62,154 +47,153 @@ function GameBoard() {
 
     // Set exactly totalCards amount
     setCards(shuffledCards.slice(0, totalCards));
-    
   }, [level]);
 
   const handleFlip = (index) => {
     if (flippedIndices.length === 2 || flippedIndices.includes(index) || matchedCards.includes(index)) {
       return;
     }
-    
+
     setFlippedIndices((prev) => [...prev, index]);
-    
+
     // Increment total attempts for every flip
     setTotalAttempts((prev) => prev + 1);
   };
 
-   useEffect(() => {
-     if (flippedIndices.length === 2) {
-       const [firstIndex, secondIndex] = flippedIndices;
-       if (cards[firstIndex] === cards[secondIndex]) {
-         setMatchedCards((prev) => [...prev, firstIndex, secondIndex]);
-         setScore((prev) => prev + 10); // Increase score by 10 for a correct match
-         setCorrectMatches((prev) => prev + 1); // Increment correct matches
-         setFlippedIndices([]);
+  useEffect(() => {
+    if (flippedIndices.length === 2) {
+      const [firstIndex, secondIndex] = flippedIndices;
+      if (cards[firstIndex] === cards[secondIndex]) {
+        setMatchedCards((prev) => [...prev, firstIndex, secondIndex]);
+        setScore((prev) => prev + 10); // Increase score by 10 for a correct match
+        setCorrectMatches((prev) => prev + 1); // Increment correct matches
+        setFlippedIndices([]);
 
-         // Play success sound and lower background music
-         const successSound = new Audio('/sounds/Successsoundeffect.mp3');
-         successSound.volume = 1.0; // Full volume for success sound
-         successSound.play();
+        // Play success sound and lower background music
+        const successSound = new Audio('/sounds/Successsoundeffect.mp3');
+        successSound.volume = 1.0; // Full volume for success sound
+        successSound.play();
 
-         if (audio) {
-           audio.volume = 0.1; // Reduce background music volume
-           setTimeout(() => {
-             audio.volume = 0.5; // Restore background music volume after 1.5 seconds
-           }, 1500);
-         }
-       } else {
-         setScore((prev) => Math.max(0, prev - 1)); // Decrease score by 1 for an incorrect match
-         const timeoutId = setTimeout(() => {
-           setFlippedIndices([]);
-         }, 1000);
-         return () => clearTimeout(timeoutId);
-       }
-     }
-   }, [flippedIndices, cards, audio]);
+        if (audio) {
+          audio.volume = 0.1; // Reduce background music volume
+          setTimeout(() => {
+            audio.volume = 0.5; // Restore background music volume after 1.5 seconds
+          }, 1500);
+        }
+      } else {
+        setScore((prev) => Math.max(0, prev - 1)); // Decrease score by 1 for an incorrect match
+        const timeoutId = setTimeout(() => {
+          setFlippedIndices([]);
+        }, 1000);
+        return () => clearTimeout(timeoutId);
+      }
+    }
+  }, [flippedIndices, cards, audio]);
 
-   useEffect(() => {
-     shuffleCards();
-   }, [shuffleCards]);
+  useEffect(() => {
+    shuffleCards();
+  }, [shuffleCards]);
 
-   // Function to launch fireworks
-   const launchFireworks = () => {
-     for (let i = 0; i < 10; i++) { 
-       setTimeout(() => {
-         confetti({
-           particleCount: 400,
-           spread: 160,
-           startVelocity: 80,
-           angle: Math.random() * 360,
-           origin: { x: Math.random(), y: Math.random() * 0.6 },
-           zIndex: 1000,
-         });
-       }, i * 300);
-     }
-   };
+  // Function to launch fireworks
+  const launchFireworks = () => {
+    for (let i = 0; i < 10; i++) { 
+      setTimeout(() => {
+        confetti({
+          particleCount: 400,
+          spread: 160,
+          startVelocity: 80,
+          angle: Math.random() * 360,
+          origin: { x: Math.random(), y: Math.random() * 0.6 },
+          zIndex: 1000,
+        });
+      }, i * 300);
+    }
+  };
 
-   // Check for game over condition
-   useEffect(() => {
-     if (matchedCards.length === cards.length && cards.length > 0) {
-       setGameOver(true);
-       launchFireworks();
-       new Audio('/sounds/crowdcheersound.mp3').play();
-       saveProgressToCookies(); // Save progress when game is over
-     }
-   }, [matchedCards, cards, saveProgressToCookies]); 
+  // Check for game over condition
+  useEffect(() => {
+    if (matchedCards.length === cards.length && cards.length > 0) {
+      setGameOver(true);
+      launchFireworks();
+      new Audio('/sounds/crowdcheersound.mp3').play();
+    }
+  }, [matchedCards, cards]);
 
-   // Play intro music when the game starts
-   useEffect(() => {
-     const bgMusic = new Audio(selectedMusic);
-     bgMusic.loop = true;
-     bgMusic.volume = 0.5;
-     bgMusic.play().catch((error) => console.error('Failed to play intro music:', error));
-     setAudio(bgMusic);
+  // Play intro music when the game starts
+  useEffect(() => {
+    const bgMusic = new Audio(selectedMusic);
+    bgMusic.loop = true;
+    bgMusic.volume = 0.5;
+    bgMusic.play().catch((error) => console.error('Failed to play intro music:', error));
+    setAudio(bgMusic);
 
-     return () => {
-       bgMusic.pause();
-       bgMusic.currentTime = 0; // Reset music when the component unmounts
-     };
-   }, [selectedMusic]);
+    return () => {
+      bgMusic.pause();
+      bgMusic.currentTime = 0; // Reset music when the component unmounts
+    };
+  }, [selectedMusic]);
 
-   const toggleMusic = () => {
-     if (audio) {
-       audio.paused ? audio.play() : audio.pause();
-     }
-   };
+  const toggleMusic = () => {
+    if (audio) {
+      audio.paused ? audio.play() : audio.pause();
+    }
+  };
 
-   const nextLevel = () => {
-     setLevel((prev) => prev + 1);
-     setMatchedCards([]);
-     setFlippedIndices([]);
-     setScore(0);
-     setGameOver(false);
-     shuffleCards();
-     saveProgressToCookies(); // Save progress when moving to the next level
+  const nextLevel = () => {
+    setLevel((prev) => prev + 1);
+    setMatchedCards([]);
+    setFlippedIndices([]);
+    setScore(0);
+    setGameOver(false);
+    shuffleCards();
 
-     // Reset attempts and correct matches for the new level
-     setTotalAttempts(0);
-     setCorrectMatches(0);
-   };
+    // Reset attempts and correct matches for the new level
+    setTotalAttempts(0);
+    setCorrectMatches(0);
+  };
 
-   // Calculate accuracy percentage
-   const calculateAccuracy = () => {
-     if (totalAttempts === 0) return "N/A"; // Avoid division by zero
-     return (((correctMatches*2) / totalAttempts) * 100).toFixed(2); // Format to two decimal places
-   };
+  // Calculate accuracy percentage
+  const calculateAccuracy = () => {
+    if (totalAttempts === 0) return "N/A"; // Avoid division by zero
+    return (((correctMatches * 2) / totalAttempts) * 100).toFixed(2); // Format to two decimal places
+  };
 
-   return (
-     <div className="game-container" style={{ display: 'flex' }}>
-       {/* Level Selection Pane */}
-       <div className="level-selection" style={{ width: '140px', marginRight: '120px' }}>
-         <h3>Select Level:</h3>
-         {[...Array(5)].map((_, index) => (
-           <button key={index} onClick={() => {setLevel(index + 1); shuffleCards();}}>
+  return (
+    <div className="game-container" style={{ display: 'flex' }}>
+      {/* Level Selection Pane */}
+      <div className="level-selection" style={{ width: '140px', marginRight: '120px' }}>
+        <h3>Select Level:</h3>
+        {[...Array(5)].map((_, index) => (
+          <button key={index} onClick={() => { setLevel(index + 1); shuffleCards(); }}>
             Level {index + 1}
-            </button>
-         ))}
-       </div>
+          </button>
+        ))}
+      </div>
 
-       {/* Upper Settings Container */}
-       <div style={{ flexGrow: '1' }}>
-         <div className="settings-container">
-           {username && <h2>Hello, {username}!</h2>}
-           
-           {/* Buttons and Scoreboard in a flex container */}
-           <div style={{ display: 'flex', alignItems: 'center' }}>
-             <label htmlFor="music-select">Choose your intro music:</label>
-             <select 
-               id="music-select" 
-               value={selectedMusic} 
-               onChange={(e) => setSelectedMusic(e.target.value)}
-               style={{ marginLeft: '10px' }} 
-             >
-               <option value="/sounds/BetterDaysBensound.mp3">Better Days</option>
-               <option value="/sounds/PraiseInstrumental.mp3">Praise</option>
-               <option value="/sounds/bensoundukulelehappyroyalty.mp3">Happy Royalty</option>
-             </select>
-             
-             <button onClick={toggleMusic} className="p-2 bg-gray-400 rounded" style={{ marginLeft: '10px' }}>
-               {audio?.paused ? 'Play Music' : 'Pause Music'}
-             </button>
+      {/* Upper Settings Container */}
+      <div style={{ flexGrow: '1' }}>
+        <div className="settings-container">
+          {username && <h2>Hello, {username}!</h2>}
+          <h2>Ready To Become The Champion, All You Need Is Attention <span style={{ fontSize: '30px' }}>💪🏆</span></h2>
+
+          {/* Buttons and Scoreboard in a flex container */}
+          <div style={{ display: 'flex', alignItems: 'center' }}>
+            <label htmlFor="music-select">Choose your intro music:</label>
+            <select
+              id="music-select"
+              value={selectedMusic}
+              onChange={(e) => setSelectedMusic(e.target.value)}
+              style={{ marginLeft: '10px' }}
+            >
+              <option value="/sounds/BetterDaysBensound.mp3">Better Days</option>
+              <option value="/sounds/PraiseInstrumental.mp3">Praise</option>
+              <option value="/sounds/bensoundukulelehappyroyalty.mp3">Happy Royalty</option>
+            </select>
+
+            <button onClick={toggleMusic} className="p-2 bg-gray-400 rounded" style={{ marginLeft: '10px' }}>
+              {audio?.paused ? 'Play Music' : 'Pause Music'}
+            </button>
+
 
              {/* Scoreboard on the right side */}
              <div className="scoreboard ml-auto">
