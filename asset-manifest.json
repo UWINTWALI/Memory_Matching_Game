@@ -1,0 +1,14 @@
+{
+  "files": {
+    "main.css": "/Memory_Matching_Game/static/css/main.291fcb37.css",
+    "main.js": "/Memory_Matching_Game/static/js/main.b35e3b18.js",
+    "static/media/bg_play_1.jpg": "/Memory_Matching_Game/static/media/bg_play_1.015f3913a24b08fd89aa.jpg",
+    "index.html": "/Memory_Matching_Game/index.html",
+    "main.291fcb37.css.map": "/Memory_Matching_Game/static/css/main.291fcb37.css.map",
+    "main.b35e3b18.js.map": "/Memory_Matching_Game/static/js/main.b35e3b18.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.291fcb37.css",
+    "static/js/main.b35e3b18.js"
+  ]
+}
