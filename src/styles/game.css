@@ -10,7 +10,7 @@ body {
 }
 
 .game-container {
-  max-width: 800px;
+  max-width: 1200px;
   margin: auto;
   padding: 20px;
 }
@@ -59,4 +59,33 @@ button:hover {
 
 select {
   padding: 10px;
+}
+
+.level-selection {
+  background-color: rgba(255, 255, 255, 0.9);
+  padding: 15px;
+  border-radius: 8px;
+  box-shadow: rgba(0, 0, 0, .2) 0px .5rem .5rem;
+  width: 100%;
+  max-width: 100px;
+  margin: auto;
+  /* Center the container */
+}
+
+.level-selection h3 {
+  margin-bottom: 10px;
+}
+
+.level-selection button {
+  padding: 10px;
+  background-color: #2196F3;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  margin-bottom: 5px;
+}
+
+.level-selection button:hover {
+  background-color: #1976D2;
 }

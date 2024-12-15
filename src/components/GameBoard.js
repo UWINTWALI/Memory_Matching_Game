@@ -23,7 +23,7 @@ function GameBoard() {
     const images = [
       'apple.jpg', 'banana.jpg', 'orange.jpg', 'grape.jpg',
       'cherry.jpg', 'pear.jpg', 'melon.jpg', 'peach.jpg',
-      'bird.jpg', 'dog.jpg', 'dog_1.jpg'
+      'bird.jpg', 'dog.jpg', 'dog_1.jpg', 'inkeri.jpg', 'tomato.jpg'
     ];
 
     // Calculate total cards based on level
@@ -141,59 +141,70 @@ function GameBoard() {
    };
 
    return (
-     <div className="game-container">
-       {/* Upper Settings Container */}
-       <div className="settings-container">
-         {username && <h2>Hello, {username}!</h2>}
-         
-         {/* Buttons and Scoreboard in a flex container */}
-         <div style={{ display: 'flex', alignItems: 'center' }}>
-           <label htmlFor="music-select">Choose your intro music:</label>
-           <select 
-             id="music-select" 
-             value={selectedMusic} 
-             onChange={(e) => setSelectedMusic(e.target.value)}
-             style={{ marginLeft: '10px' }} // Add some space between label and dropdown
-           >
-             <option value="/sounds/BetterDaysBensound.mp3">Better Days</option>
-             <option value="/sounds/PraiseInstrumental.mp3">Praise</option>
-             <option value="/sounds/bensoundukulelehappyroyalty.mp3">Happy Royalty</option>
-           </select>
-           
-           <button onClick={toggleMusic} className="p-2 bg-gray-200 rounded" style={{ marginLeft: '10px' }}>
-             {audio?.paused ? 'Play Music' : 'Pause Music'}
-           </button>
-
-           {/* Scoreboard on the right side */}
-           <div className="scoreboard" style={{ marginLeft: 'auto' }}>
-             <strong>Score:</strong> <span><ScoreBoard score={score} /></span>
-             <strong>Level:</strong> <span>{level}</span>
-           </div>
-         </div>
-       </div>
-
-       {/* Grid Container with No Background */}
-       <div className="game-board">
-         {cards.map((image, index) => (
-           <Card
-             key={index}
-             image={image}
-             onClick={() => handleFlip(index)}
-             isFlipped={flippedIndices.includes(index) || matchedCards.includes(index)}
-             number={index + 1} // Pass card number starting from one
-           />
+     <div className="game-container" style={{ display: 'flex' }}>
+       {/* Level Selection Pane */}
+       <div className="level-selection" style={{ width: '140px', marginRight: '120px' }}>
+         <h3>Select Level:</h3>
+         {[...Array(5)].map((_, index) => (
+           <button key={index} onClick={() => {setLevel(index + 1); shuffleCards();}}>
+            Level {index + 1}
+            </button>
          ))}
        </div>
 
-       {gameOver && (
-         <div className="text-center text-xl mt-4">
-           <p>You Win! All Cards Matched!</p>
-           <button className="mt-2 p-2 bg-blue-500 text-white rounded" onClick={nextLevel}>
-             Next Level
-           </button>
+       {/* Upper Settings Container */}
+       <div style={{ flexGrow: '1' }}>
+         <div className="settings-container">
+           {username && <h2>Hello, {username}!</h2>}
+           
+           {/* Buttons and Scoreboard in a flex container */}
+           <div style={{ display: 'flex', alignItems: 'center' }}>
+             <label htmlFor="music-select">Choose your intro music:</label>
+             <select 
+               id="music-select" 
+               value={selectedMusic} 
+               onChange={(e) => setSelectedMusic(e.target.value)}
+               style={{ marginLeft: '10px' }} // Add some space between label and dropdown
+             >
+               <option value="/sounds/BetterDaysBensound.mp3">Better Days</option>
+               <option value="/sounds/PraiseInstrumental.mp3">Praise</option>
+               <option value="/sounds/bensoundukulelehappyroyalty.mp3">Happy Royalty</option>
+             </select>
+             
+             <button onClick={toggleMusic} className="p-2 bg-gray-400 rounded" style={{ marginLeft: '10px' }}>
+               {audio?.paused ? 'Play Music' : 'Pause Music'}
+             </button>
+
+             {/* Scoreboard on the right side */}
+             <div className="scoreboard" style={{ marginLeft: 'auto' }}>
+               <strong>Score:</strong> <span><ScoreBoard score={score} /></span>
+               <strong>Level:</strong> <span>{level}</span>
+             </div>
+           </div>
          </div>
-       )}
-       
+
+         {/* Grid Container with No Background */}
+         <div className="game-board">
+           {cards.map((image, index) => (
+             <Card
+               key={index}
+               image={image}
+               onClick={() => handleFlip(index)}
+               isFlipped={flippedIndices.includes(index) || matchedCards.includes(index)}
+               number={index + 1} // Pass card number starting from one
+             />
+           ))}
+         </div>
+
+         {gameOver && (
+           <div className="text-center text-xl mt-4">
+             <p>You Win! All Cards Matched!</p>
+             <button className="mt-2 p-2 bg-blue-500 text-white rounded" onClick={nextLevel}>
+               Next Level
+             </button>
+           </div>
+         )}
+       </div>
      </div>
    );
 }
