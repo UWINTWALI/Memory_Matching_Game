@@ -1,0 +1,62 @@
+body {
+  background-image: url('/public/bg_images/bg_play_1.jpg');
+  background-size: cover;
+  background-position: center;
+  background-attachment: fixed;
+  font-family: 'Times New Roman', Times, serif;
+  margin: 0;
+  padding: 0;
+  overflow-y: auto;
+}
+
+.game-container {
+  max-width: 800px;
+  margin: auto;
+  padding: 20px;
+}
+
+.settings-container {
+  background-color: rgba(255, 255, 255, 0.9);
+  padding: 15px;
+  border-radius: 8px;
+  box-shadow: rgba(0, 0, 0, .2) 0px .5rem .5rem;
+}
+
+.scoreboard {
+  font-size: larger;
+}
+
+.game-board {
+  margin-top: 1rem;
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, auto));
+  gap: .5rem;
+  background-color: rgba(160, 196, 255, 0.5);
+  padding: 10px;
+  border-radius: 8px;
+}
+
+.card {
+  border-radius: 10px;
+}
+
+.card:hover {
+  transform: scale(1.05);
+}
+
+button {
+  padding: 10px;
+  background-color: #4CAF50;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+button:hover {
+  background-color: #45a049;
+}
+
+select {
+  padding: 10px;
+}

@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom"; // Use useNavigate instead of useHistory
+import '../styles/home.css'; // Import your specific styles for the home page
 
 function HomePage() {
   const [username, setUsername] = useState('');
@@ -18,7 +19,7 @@ function HomePage() {
     <div className="home-page">
       <h1>Welcome to the Kids Picture Matching Game</h1>
       {!isSubmitted ? (
-        <form onSubmit={handleSubmit}>
+        <form onSubmit={handleSubmit} className="username-form">
           <label htmlFor="username">Enter your username:</label>
           <input
             type="text"
