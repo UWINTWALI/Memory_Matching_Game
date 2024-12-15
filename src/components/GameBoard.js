@@ -4,6 +4,7 @@ import { useLocation } from 'react-router-dom';
 import Card from './Card';
 import ScoreBoard from './ScoreBoard';
 import confetti from 'canvas-confetti';
+import Cookies from 'js-cookie'; // Import js-cookie
 
 function GameBoard() {
   const location = useLocation();
@@ -16,6 +17,24 @@ function GameBoard() {
   const [level, setLevel] = useState(1);
   const [audio, setAudio] = useState(null);
   const [selectedMusic, setSelectedMusic] = useState('/sounds/PraiseInstrumental.mp3');
+  
+  // New state variables for accuracy tracking
+  const [totalAttempts, setTotalAttempts] = useState(0);
+  const [correctMatches, setCorrectMatches] = useState(0);
+  
+  // Load saved score and level from cookies
+  useEffect(() => {
+    const savedScore = Cookies.get(`score_${username}`) || 0;
+    const savedLevel = Cookies.get(`level_${username}`) || 1;
+    setScore(parseInt(savedScore));
+    setLevel(parseInt(savedLevel));
+  }, [username]);
+
+  // Save score and level to cookies
+  const saveProgressToCookies = useCallback(() => {
+    Cookies.set(`score_${username}`, score);
+    Cookies.set(`level_${username}`, level);
+  }, [username, score, level]);
 
   // Shuffle cards based on current level
   const shuffleCards = useCallback(() => {
@@ -23,7 +42,7 @@ function GameBoard() {
     const images = [
       'apple.jpg', 'banana.jpg', 'orange.jpg', 'grape.jpg',
       'cherry.jpg', 'pear.jpg', 'melon.jpg', 'peach.jpg',
-      'bird.jpg', 'dog.jpg', 'dog_1.jpg', 'inkeri.jpg', 'tomato.jpg'
+      'bird.jpg', 'dog.jpg', 'dog_1.jpg', 'inkeri.jpg', 'tomato.jpg',
     ];
 
     // Calculate total cards based on level
@@ -50,7 +69,11 @@ function GameBoard() {
     if (flippedIndices.length === 2 || flippedIndices.includes(index) || matchedCards.includes(index)) {
       return;
     }
+    
     setFlippedIndices((prev) => [...prev, index]);
+    
+    // Increment total attempts for every flip
+    setTotalAttempts((prev) => prev + 1);
   };
 
    useEffect(() => {
@@ -59,6 +82,7 @@ function GameBoard() {
        if (cards[firstIndex] === cards[secondIndex]) {
          setMatchedCards((prev) => [...prev, firstIndex, secondIndex]);
          setScore((prev) => prev + 10); // Increase score by 10 for a correct match
+         setCorrectMatches((prev) => prev + 1); // Increment correct matches
          setFlippedIndices([]);
 
          // Play success sound and lower background music
@@ -108,8 +132,9 @@ function GameBoard() {
        setGameOver(true);
        launchFireworks();
        new Audio('/sounds/crowdcheersound.mp3').play();
+       saveProgressToCookies(); // Save progress when game is over
      }
-   }, [matchedCards, cards]);
+   }, [matchedCards, cards, saveProgressToCookies]); 
 
    // Play intro music when the game starts
    useEffect(() => {
@@ -138,6 +163,17 @@ function GameBoard() {
      setScore(0);
      setGameOver(false);
      shuffleCards();
+     saveProgressToCookies(); // Save progress when moving to the next level
+
+     // Reset attempts and correct matches for the new level
+     setTotalAttempts(0);
+     setCorrectMatches(0);
+   };
+
+   // Calculate accuracy percentage
+   const calculateAccuracy = () => {
+     if (totalAttempts === 0) return "N/A"; // Avoid division by zero
+     return (((correctMatches*2) / totalAttempts) * 100).toFixed(2); // Format to two decimal places
    };
 
    return (
@@ -164,7 +200,7 @@ function GameBoard() {
                id="music-select" 
                value={selectedMusic} 
                onChange={(e) => setSelectedMusic(e.target.value)}
-               style={{ marginLeft: '10px' }} // Add some space between label and dropdown
+               style={{ marginLeft: '10px' }} 
              >
                <option value="/sounds/BetterDaysBensound.mp3">Better Days</option>
                <option value="/sounds/PraiseInstrumental.mp3">Praise</option>
@@ -176,10 +212,19 @@ function GameBoard() {
              </button>
 
              {/* Scoreboard on the right side */}
-             <div className="scoreboard" style={{ marginLeft: 'auto' }}>
-               <strong>Score:</strong> <span><ScoreBoard score={score} /></span>
-               <strong>Level:</strong> <span>{level}</span>
+             <div className="scoreboard ml-auto">
+              <p className="block">
+             <strong>Score:</strong> <span><ScoreBoard score={score} /></span>
+             </p>
+             <p className="block">
+             <strong>Level:</strong> <span>{level}</span>
+             </p>
+             <p className="block">
+            <strong>Accuracy:</strong> <span>{calculateAccuracy()}%</span>
+            </p>
              </div>
+
+
            </div>
          </div>
 
@@ -191,14 +236,14 @@ function GameBoard() {
                image={image}
                onClick={() => handleFlip(index)}
                isFlipped={flippedIndices.includes(index) || matchedCards.includes(index)}
-               number={index + 1} // Pass card number starting from one
+               number={index + 1} 
              />
            ))}
          </div>
 
          {gameOver && (
            <div className="text-center text-xl mt-4">
-             <p>You Win! All Cards Matched!</p>
+             <p className="text-white text-xl font-bold">You Win! All Cards Matched!</p>
              <button className="mt-2 p-2 bg-blue-500 text-white rounded" onClick={nextLevel}>
                Next Level
              </button>
