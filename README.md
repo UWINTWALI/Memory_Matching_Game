@@ -1,6 +1,6 @@
 # Memory Matching Game
 
-## 📌 Project Overview
+## Project Overview
 The **Memory Matching Game** is an interactive and educational game designed to enhance memory, attention span, and problem-solving skills in children aged 6-12, with advanced levels suitable for teens and adults. This project blends fun and learning, creating an engaging environment that sharpens cognitive abilities while keeping players entertained.
 
 ## Objectives
