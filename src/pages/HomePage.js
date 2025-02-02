@@ -20,7 +20,7 @@ function HomePage() {
       <h1>Welcome to the Kids Picture Matching Game</h1>
       {!isSubmitted ? (
         <form onSubmit={handleSubmit} className="username-form">
-          <label htmlFor="username">Enter your username:</label>
+          <label htmlFor="username">Enter your Nickname or username:</label>
           <input
             type="text"
             id="username"

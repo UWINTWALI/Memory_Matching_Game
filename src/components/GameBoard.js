@@ -153,11 +153,11 @@ function GameBoard() {
     const calculateAttentionSpan = () => {
         const accuracyPercentage = calculateAccuracy();
         
-        if (accuracyPercentage === "N/A") return "N/A"; // Avoid calculation if no attempts
+        if (accuracyPercentage === "N/A") return "N/A"; // avoid calculation if no attempts
         
         let accuracyValue = parseFloat(accuracyPercentage);
         
-        return ((accuracyValue / 50) * 8.25).toFixed(2) + " seconds"; // Calculate attention span based on accuracy
+        return ((accuracyValue / 50) * 8.25).toFixed(2) + " seconds"; // Calculate attentoin span based on accuracy
     };
 
     return (   
