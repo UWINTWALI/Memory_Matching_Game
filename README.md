@@ -30,6 +30,11 @@ The **Memory Matching Game** is an interactive and educational game designed to 
 - **Audio**: Background music and sound effects
 - **Version Control**: Git & GitHub
 
+
+<img src="project%20images/Entry_Page.png" alt="Entry Page" width="600" height="400">
+
+<img src="project%20images/Game_play.png" alt="Gameplay" width="600" height="400">
+
 ## Future Enhancements
 - **Multiplayer Mode**: Compete with friends in real-time.
 - **Custom Themes**: Players can upload their own images for a personalized experience.
